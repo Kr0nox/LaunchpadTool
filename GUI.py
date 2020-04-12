@@ -216,7 +216,6 @@ class GUI:
         t = threading.Thread(target=self.startPad)
         t.start()
         self.root.protocol("WM_DELETE_WINDOW", self.closing)
-        self.setButtonColor(1, "#0000ff")
         self.root.mainloop()
 
     # UI Changes
