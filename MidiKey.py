@@ -32,6 +32,8 @@ class MidiKey:
     def setColor(self, r, g, launchpad):
         launchpad.LedCtrlXY(self.x, self.y, r, g)
 
+    def setDefaultColor(self, launchpad):
+        launchpad.LedCtrlXY(self.x, self.y, self.uRed, self.uGreen)
 
 def checkIfKeyExists(key, data):
     if data == {}:

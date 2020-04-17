@@ -1,62 +1,61 @@
 # https://pyautogui.readthedocs.io/en/latest/cheatsheet.html#mouse-functions
-import pyautogui as controller
-import clipboard
-from ActionFiles.Standard import Standard
-from ActionFiles.Custom import Custom
-from ActionFiles.Krita import Krita
-from ActionFiles.Selection import Selection
-from ActionFiles.LaunchpadActions import LaunchpadActions
+import inspect
+import json
+import importlib
+import importlib.util
+import sys
 from inspect import signature
+from MidiKey import checkIfKeyExists
+
+# Always imported because they are functions that you need to run the launchpad
+from ActionFiles.LaunchpadActions import LaunchpadActions
 
 methodCategories = []
 methodNames = []
 attributeCount = []
+classes = []
 
 
-class Actions(LaunchpadActions, Standard, Selection, Custom, Krita):
+def loadClasses():
+    global classes
+    paths = []
+    names = []
+    with open("plugins.json") as json_file:
+        allData = json.load(json_file)
+        plugins = allData["plugins"]
+        for p in plugins:
+            if not checkIfKeyExists(["path", "name"], p):
+                continue
+            if not paths.__contains__(p["path"]):
+                paths.append(p["path"])
+            names.append(p["name"])
+
+    for p in paths:
+        sys.path.append(p)
+
+    for n in names:
+        importlib.import_module(n)
+        for name, obj in inspect.getmembers(sys.modules[n]):
+            if inspect.isclass(obj):
+                classes.append(obj)
+
+
+loadClasses()
+
+
+class Actions(LaunchpadActions, *classes):
 
     def __init__(self, lp):
-        self.listener = lp
-
-
-    def clipboardAction(self, pos):
-        if self.clipboardMode == 0:
-            self.copyToClipboard(int(pos))
-        else:
-            self.pasteFromClipboard(int(pos))
-
-    def changeClipboardMode(self):
-        self.clipboardMode = -self.clipboardMode + 1
-        print(self.clipboardMode)
-        self.listener.setColorXY(8, self.clipboardRow, 3 * self.clipboardMode, -3 * self.clipboardMode + 3)
-        for i in range(8):
-            self.listener.setColorXY(i, self.clipboardRow,
-                                     0 if self.clipboards[i] != "" else 3 - 3 * self.clipboardMode,
-                                     3 if self.clipboards[i] != "" else 0)
-
-    def copyToClipboard(self, position):
-        c = clipboard.paste()
-        self.copy()
-        self.clipboards[position] = clipboard.paste()
-        clipboard.copy(c)
-        self.listener.setColorXY(position, self.clipboardRow, 0, 3)
-
-    def pasteFromClipboard(self, position):
-        c = clipboard.paste()
-        clipboard.copy(self.clipboards[position])
-        self.paste()
-        clipboard.copy(c)
-
-    def clearClipboard(self, position):
-        print("coming")
-
-    def none(self):
-        print("noe")
-
-    def test(self, a, b):
-        print(b)
-        print(a)
-
+        print("initA")
+        bases = Actions.__bases__
+        for b in bases:
+            for method_name in dir(b):
+                if callable(getattr(b, method_name)):
+                    if method_name == "_init":
+                        print(str(b) + " | " + str(len(signature(getattr(b, "_init")).parameters)))
+                        if len(signature(getattr(b, "_init")).parameters) == 2:
+                            getattr(b, "_init")(self, lp)
+        # self.listener = lp
 
 
 def checkMethods():
@@ -73,6 +72,7 @@ def checkMethods():
                 args.append(len(signature(getattr(b, o)).parameters) - 1)
         methodNames.append(callables)
         attributeCount.append(args)
+
 
 def getParentClass(methodName):
     for count, val in enumerate(methodNames):

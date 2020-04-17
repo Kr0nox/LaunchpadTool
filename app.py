@@ -1,5 +1,4 @@
 # region import
-from Actions import checkMethods
 import sys
 from GUI import GUI
 from KeyProfile import KeyProfile
@@ -15,7 +14,8 @@ except ImportError:
 profiles: List[KeyProfile] = []
 paths = ["Profiles\\modeChangeKeys.json",
          "Profiles\\programmingKeys.json",
-         "Profiles\\kritaKeys.json"]
+         "Profiles\\kritaKeys.json",
+         "Profiles\\clipboardKeys.json"]
 
 
 def main():
