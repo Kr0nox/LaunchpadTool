@@ -153,6 +153,7 @@ class GUI:
         lblFunc = tk.Label(buttonSettingsCanvas, text="Function:", **DEFAULT_COLORS)
         lblFunc.grid(column=0, row=4)
 
+
         Actions.checkMethods()
         self.funcCatChoices = Actions.methodCategories
         self.funcCatChoices.append("none")

@@ -1,7 +1,8 @@
 
 class LaunchpadActions:
 
-    def __init__(self, lp):
+    def _init(self, lp):
+        print("initLP")
         self.listener = lp
 
     def changeMode(self, mode):

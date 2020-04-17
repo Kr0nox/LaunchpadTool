@@ -1,0 +1,25 @@
+{
+  "plugins": [
+    {
+      "path": "C:/Users/alexa/PycharmProjects/LaunchpadTool/ActionFiles",
+      "name": "Standard"
+    },
+    {
+      "path": "C:/Users/alexa/PycharmProjects/LaunchpadTool/ActionFiles",
+      "name": "Selection"
+    },
+    {
+      "path": "C:/Users/alexa/PycharmProjects/LaunchpadTool/ActionFiles",
+      "name": "Custom"
+    },
+    {
+      "path": "C:/Users/alexa/PycharmProjects/LaunchpadTool/ActionFiles",
+      "name": "Krita"
+    },
+    {
+      "path": "C:/Users/alexa/PycharmProjects/LaunchpadTool/ActionFiles",
+      "name": "ClipboardAction"
+    }
+  ]
+
+}

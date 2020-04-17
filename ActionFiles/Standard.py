@@ -2,6 +2,7 @@ import pyautogui as controller
 
 
 class Standard:
+    a = 1
 
     def new(self):
         controller.hotkey('ctrl', 'n')

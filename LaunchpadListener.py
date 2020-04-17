@@ -31,6 +31,7 @@ class LaunchpadListener:
         self.profiles: List[profiles] = profiles
         self.actions: Actions = Actions(self)
         self.launchpad = launchpad
+        self.pressedButton = [None, None]
         self.GUI = UI
         self.setButtons()
         self.GUI.colorUIButtons(self.buttons, True)
@@ -45,14 +46,17 @@ class LaunchpadListener:
             else:
                 # find pressed button
                 position = buttonData[0] + buttonData[1] * 9
-                pressedKey = self.buttons[position]
-                if pressedKey is None:
-                    pressedKey = MidiKey({'x': buttonData[0], 'y': buttonData[1], 'red': 0, 'green': 0})
+                changedKey = self.buttons[position]
+                if changedKey is None:
+                    changedKey = MidiKey({'x': buttonData[0], 'y': buttonData[1], 'red': 0, 'green': 0})
 
                 # give Button new Cor & do action
-                pressedKey.changeColor(buttonData[2], self.launchpad)
+                changedKey.changeColor(buttonData[2], self.launchpad)
                 if buttonData[2]:
+                    self.pressedButton = [buttonData[0], buttonData[1]]
                     self.action(position)
+                else :
+                    self.pressedButton = [None,None]
 
         self.launchpad.Reset()
 
@@ -88,24 +92,24 @@ class LaunchpadListener:
         try:
             self.GUI.pressedOnLaunchpad(pressed, self.buttons[pressed])
         except:
-            ctypes.windll.user32.MessageBoxW(0, u"Error", u"Error", 0)
-
+            print("Error")
 
     def setColorXY(self, x, y, r, g):
-        self.findButton(x + y * 9).setColor(r, g, self.launchpad)
+        b = self.buttons[x + y * 9]
+        if b is not None:
+            b.setColor(r, g, self.launchpad)
 
     def setColorRaw(self, pos, r, g):
-        self.buttons[pos].setColor(r, g, self.launchpad)
+        b = self.buttons[pos]
+        if b is not None:
+            b.setColor(r, g, self.launchpad)
 
-    def findButton(self, position):
-        left = 0
-        right = len(self.buttons)
-        while left <= right:
-            center = int(left + (right - left) / 2)
-            if self.buttons[center].position > position:
-                right = center - 1
-            elif self.buttons[center].position < position:
-                left = center + 1
-            else:
-                return self.buttons[center]
-        return None
+    def setDefaultColorXY(self, x, y):
+        b = self.buttons[x + y * 9]
+        if b is not None:
+            b.setDefaultColor(self.launchpad)
+
+    def setDefaultColorRaw(self, pos):
+        b = self.buttons[pos]
+        if b is not None:
+            b.setDefaultColor(self.launchpad)
